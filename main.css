@@ -1,0 +1,75 @@
+.flex-row {
+    display: flex;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.flex-grow-0 {
+    flex-grow: 0;
+}
+
+.hover-white:hover {
+    color: white;
+    transition: color .25s;
+}
+
+.hover-white {
+    transition: color .25s;
+}
+
+.hover-green:hover {
+    color: #5cb85c;
+    transition: color .25s;
+}
+
+.hover-green {
+    transition: color .25s;
+}
+
+.hover-red:hover {
+    color: #dc3545;
+    transition: color .25s;
+}
+
+.hover-red {
+    transition: color .25s;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#user-cols {
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 100%;
+    height: 100%;
+}
+
+#main-div {
+    flex-grow: 1;
+}
+
+.user-col {
+    display: flex;
+    flex-direction: column;
+    /* height: 0px; */
+}
+
+.task-list {
+    height: 0px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.user-col .far {
+    line-height: unset;
+}
