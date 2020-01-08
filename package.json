@@ -1,0 +1,22 @@
+{
+  "name": "todo.frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PercyODI/ToDo.FrontEnd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PercyODI/ToDo.FrontEnd/issues"
+  },
+  "homepage": "https://github.com/PercyODI/ToDo.FrontEnd#readme",
+  "dependencies": {
+    "@types/jquery": "^3.3.31"
+  }
+}

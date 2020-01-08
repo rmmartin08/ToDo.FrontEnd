@@ -78,7 +78,6 @@ function loadUsersUi(users) {
                     TaskBody: newTaskBody.children(".form-control").val(),
                     UserId: user.Id
                 }
-
             }).done(function () { // Update the task list once api completes
                 getAndLoadTasksForUser(user.Id);
                 newTaskTitle.children(".form-control").val("");
@@ -193,7 +192,7 @@ function BuildTask(task, appendToElem, isComplete) {
                 getAndLoadTasksForUser(task.UserId);
             });
     });
-    // Uncompleted task template HTML
+    // Task Template HTML
     let taskHtml = $(`<div class="card m-2 ${isComplete ? "border-danger" : "border-success"}">
             <div class="card-header ${isComplete ? "bg-danger" : "bg-success"} flex-row">
                 <h5 class="card-title text-center flex-grow-1">${task.Title}</h3>
@@ -202,7 +201,7 @@ function BuildTask(task, appendToElem, isComplete) {
                 <p class="card-text">${task.TaskBody}</p>
             </div>
             <div class="card-footer text-muted">
-            ${isComplete
+        ${isComplete
             ? `<p class="text-right m-0">Finished: ${new Date(task.CompletedDate).toDateString()}</p>`
             : `<p class="text-right m-0">Started: ${new Date(task.CreatedDate).toDateString()}</p>`
         }
@@ -216,7 +215,6 @@ function BuildTask(task, appendToElem, isComplete) {
         let previousCardHeader = taskHtml.children(".card-header").detach();
         let newTitleInput = $(`<div class="card-header flex-row"><input class="form-control p-2 flex-grow-1" type="text" /></div>`);
         newTitleInput.children("input").val(task.Title);
-        // let newTitleBtn = $(`<button class="btn btn-primary">Submit</button>`);
         newTitleInput.keypress(function (e) {
             if (e.which == 13) {
                 $.ajax({
@@ -231,7 +229,6 @@ function BuildTask(task, appendToElem, isComplete) {
                 })
             }
         })
-        // newTitleInput.append(newTitleBtn);
         taskHtml.prepend(newTitleInput);
 
         newTitleInput.children("input").focus();
