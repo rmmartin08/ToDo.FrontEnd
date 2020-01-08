@@ -30,7 +30,7 @@ $(function () {
 /**
  * @param {string} userId
  */
-function getTasksForUser(userId) {
+function getAndLoadTasksForUser(userId) {
     $.ajax(`${apiHostBase}/tasks?userId=${userId}`)
         .done(function (tasks) {
             loadTasksUi(userId, tasks);
@@ -78,14 +78,13 @@ function loadUsersUi(users) {
                     TaskBody: newTaskBody.children(".form-control").val(),
                     UserId: user.Id
                 }
+
+            }).done(function () { // Update the task list once api completes
+                getAndLoadTasksForUser(user.Id);
+                newTaskTitle.children(".form-control").val("");
+                newTaskBody.children(".form-control").val("");
+                newTaskForm.toggle();
             })
-                // Update the task list once api completes
-                .done(function () {
-                    getTasksForUser(user.Id);
-                    newTaskTitle.children(".form-control").val("");
-                    newTaskBody.children(".form-control").val("");
-                    newTaskForm.toggle();
-                })
         });
 
         let newTaskShowIcon = $(`<i class="far fa-plus fa-2x hover-green pr-5"></i>`);
@@ -105,7 +104,7 @@ function loadUsersUi(users) {
         userColsDiv.append(userHtml);
 
         // Load that user's tasks
-        getTasksForUser(user.Id);
+        getAndLoadTasksForUser(user.Id);
     }
 }
 
@@ -180,10 +179,9 @@ function BuildTask(task, appendToElem, isComplete) {
                 Id: task.Id,
                 IsComplete: !isComplete
             }
-        })
-            .done(function () {
-                getTasksForUser(task.UserId);
-            });
+        }).done(function () {
+            getAndLoadTasksForUser(task.UserId);
+        });
     });
     let deleteX = $(`<i class="far fa-times-square fa-2x hover-red"></i>`);
     deleteX.click(function () {
@@ -192,7 +190,7 @@ function BuildTask(task, appendToElem, isComplete) {
             method: "DELETE"
         })
             .done(function () {
-                getTasksForUser(task.UserId);
+                getAndLoadTasksForUser(task.UserId);
             });
     });
     // Uncompleted task template HTML
@@ -204,15 +202,80 @@ function BuildTask(task, appendToElem, isComplete) {
                 <p class="card-text">${task.TaskBody}</p>
             </div>
             <div class="card-footer text-muted">
-            ${
-        isComplete
+            ${isComplete
             ? `<p class="text-right m-0">Finished: ${new Date(task.CompletedDate).toDateString()}</p>`
             : `<p class="text-right m-0">Started: ${new Date(task.CreatedDate).toDateString()}</p>`
-
         }
             </div>
         </div>`);
     taskHtml.children(".card-header").prepend(deleteX);
     taskHtml.children(".card-header").append(completeCheckbox);
+
+    // Add the ability to change the title
+    taskHtml.find(".card-title").click(function () {
+        let previousCardHeader = taskHtml.children(".card-header").detach();
+        let newTitleInput = $(`<div class="card-header flex-row"><input class="form-control p-2 flex-grow-1" type="text" /></div>`);
+        newTitleInput.children("input").val(task.Title);
+        // let newTitleBtn = $(`<button class="btn btn-primary">Submit</button>`);
+        newTitleInput.keypress(function (e) {
+            if (e.which == 13) {
+                $.ajax({
+                    url: `${apiHostBase}/tasks`,
+                    method: "PUT",
+                    data: {
+                        Id: task.Id,
+                        Title: newTitleInput.children("input").val()
+                    }
+                }).done(function () {
+                    getAndLoadTasksForUser(task.UserId);
+                })
+            }
+        })
+        // newTitleInput.append(newTitleBtn);
+        taskHtml.prepend(newTitleInput);
+
+        newTitleInput.children("input").focus();
+
+        newTitleInput.focusout(function () {
+            newTitleInput.replaceWith(previousCardHeader);
+        })
+    });
+
+    // Add the ability to change the Task Body
+    taskHtml.children(".card-body").click(function () {
+        let previousHeight = taskHtml.children(".card-body").height();
+        let previousCardBody = taskHtml.children(".card-body").detach();
+        let newCardBody = $(`<div class="card-body">`);
+        let newTextArea = $(`<textarea class="form-control">${task.TaskBody}</textarea>`);
+        newTextArea.width("100%");
+        newTextArea.height(previousHeight * 1.8);
+        previousCardBody.detach();
+        newCardBody.append(newTextArea);
+
+        let btnRow = $(`<div class="flex-row">`);
+        let cancelBtn = $(`<button class="btn btn-info flex-grow-1 mt-1 mr-1">Cancel</button>`)
+        cancelBtn.click(function () {
+            taskHtml.children(".card-body").replaceWith(previousCardBody);
+        })
+        let submitBtn = $(`<button class="btn btn-primary flex-grow-1 mt-1 ml-1">Update</button>`);
+        submitBtn.click(function () {
+            $.ajax({
+                url: `${apiHostBase}/tasks`,
+                method: "PUT",
+                data: {
+                    Id: task.Id,
+                    TaskBody: newTextArea.val()
+                }
+            }).done(function () {
+                getAndLoadTasksForUser(task.UserId);
+            })
+        })
+        btnRow.append(cancelBtn);
+        btnRow.append(submitBtn);
+
+        newCardBody.append(btnRow);
+        taskHtml.children(".card-header").after(newCardBody);
+        newTextArea.focus();
+    })
     appendToElem.append(taskHtml);
 }
