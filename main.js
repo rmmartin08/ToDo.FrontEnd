@@ -26,7 +26,6 @@ $(function () {
         })
 });
 
-
 /**
  * @param {string} userId
  */
@@ -187,10 +186,9 @@ function BuildTask(task, appendToElem, isComplete) {
         $.ajax({
             url: `${apiHostBase}/tasks/${task.Id}`,
             method: "DELETE"
-        })
-            .done(function () {
-                getAndLoadTasksForUser(task.UserId);
-            });
+        }).done(function () {
+            getAndLoadTasksForUser(task.UserId);
+        });
     });
     // Task Template HTML
     let taskHtml = $(`<div class="card m-2 ${isComplete ? "border-danger" : "border-success"}">
