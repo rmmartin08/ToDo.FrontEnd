@@ -12,6 +12,7 @@ Greetings! This repository holds the base front-end for our internal ToDoBer app
     - To install the types for jQuery, type the following command
     > `npm install`
 1. In `main.js`, you will need to update the `apiHostBase` variable to use the port that your backend is using.
+1. Move the ToDo.db file to `C:\ToDo\`
 
 # Resources
 
