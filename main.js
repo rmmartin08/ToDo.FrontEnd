@@ -16,7 +16,7 @@
  * @property {String} CompletedDate
  * @property {Boolean} IsComplete
  * **/
-let apiHostBase = "http://localhost:18155/api";
+let apiHostBase = "http://localhost:54781/api";
 
 $(function () {
     $.ajax(`${apiHostBase}/users`)
