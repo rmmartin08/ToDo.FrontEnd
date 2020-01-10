@@ -197,16 +197,22 @@ function BuildTask(task, appendToElem, isComplete) {
             </div>
             <div class="card-body">
                 <p class="card-text">${task.TaskBody}</p>
+                
             </div>
+            <button type="button" class="btn btn-dark comment-button">Comments</button>
+            
             <div class="card-footer text-muted">
         ${isComplete
             ? `<p class="text-right m-0">Finished: ${new Date(task.CompletedDate).toDateString()}</p>`
             : `<p class="text-right m-0">Started: ${new Date(task.CreatedDate).toDateString()}</p>`
         }
+        
+        
             </div>
         </div>`);
     taskHtml.children(".card-header").prepend(deleteX);
     taskHtml.children(".card-header").append(completeCheckbox);
+    
 
     // Add the ability to change the title
     taskHtml.find(".card-title").click(function () {
@@ -272,5 +278,36 @@ function BuildTask(task, appendToElem, isComplete) {
         taskHtml.children(".card-header").after(newCardBody);
         newTextArea.focus();
     })
+    
+    //Add comments to the task
+    taskHtml.find(".comment-button").click(function () {
+        let comment = $(`<div class="comment-flex">`);
+        let newTextArea = $(`<textarea class="form-control"></textarea>`);
+        comment.append(newTextArea);
+        let btnRow = $(`<div class="flex-row">`);
+        let cancelBtn = $(`<button class="btn btn-info flex-grow-1 mt-1 mr-1">Cancel</button>`)
+        cancelBtn.click(function () {
+        })
+        let submitBtn = $(`<button class="btn btn-primary flex-grow-1 mt-1 ml-1">Add</button>`);
+        submitBtn.click(function () {
+            $.ajax({
+                url: `${apiHostBase}/comments`,
+                method: "POST",
+                data: {
+                    UserId: task.UserId,
+                    TaskId: task.Id,
+                    CommentBody: newTextArea.val()
+                }
+            }).done(function () {
+                getAndLoadTasksForUser(task.UserId);
+            })
+        })
+        taskHtml.append(comment)
+    })
+         
+
+
+
+
     appendToElem.append(taskHtml);
 }
